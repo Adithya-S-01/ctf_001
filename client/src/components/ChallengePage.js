@@ -241,14 +241,15 @@ function ChallengePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showHint, setShowHint] = useState(false);
 
-  // Webshell state
+  // Webshell state (temporarily disabled)
   const [showWebshell, setShowWebshell] = useState(false);
-  const [terminalUrl, setTerminalUrl] = useState('');
-  const [isTerminalLoading, setIsTerminalLoading] = useState(false);
+  // const [terminalUrl, setTerminalUrl] = useState('');
+  // const [isTerminalLoading, setIsTerminalLoading] = useState(false);
 
   // Other
   const [flagInput, setFlagInput] = useState('');
-  const [publicApiUrl, setPublicApiUrl] = useState('');
+  // Note: publicApiUrl temporarily disabled while webshell service is separate
+  // const [publicApiUrl, setPublicApiUrl] = useState('');
 
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -258,7 +259,7 @@ function ChallengePage() {
         const data = await response.json();
         if (data.success) {
           setChallenge(data.challenge);
-          setPublicApiUrl(data.publicApiUrl);
+          // setPublicApiUrl(data.publicApiUrl); // Temporarily disabled
         } else {
           navigate('/map');
         }
@@ -287,43 +288,12 @@ function ChallengePage() {
   const openTerminal = useCallback(async () => {
     // Webshell service temporarily disabled for initial deployment
     alert('Webshell service will be available after Docker services are deployed to Azure');
-    return;
-    
-    if (terminalUrl || isTerminalLoading) return; // already running or starting
-    setIsTerminalLoading(true);
-    const token = localStorage.getItem('token');
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/webshell/start`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (data.url) {
-        setTerminalUrl(data.url);
-      } else {
-        console.error('Failed to get terminal URL:', data.error);
-      }
-    } catch (err) {
-      console.error('Error fetching terminal:', err);
-    } finally {
-      setIsTerminalLoading(false);
-    }
-  }, [terminalUrl, isTerminalLoading]);
+  }, []);
 
   const stopTerminal = useCallback(async () => {
-    if (!terminalUrl) return;
-    const token = localStorage.getItem('token');
-    try {
-      await fetch(`${process.env.REACT_APP_API_URL}/api/webshell/stop`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    } catch (err) {
-      console.error('Error stopping terminal:', err);
-    } finally {
-      setTerminalUrl('');
-    }
-  }, [terminalUrl]);
+    // Webshell service temporarily disabled
+    alert('Webshell service will be available after Docker services are deployed to Azure');
+  }, []);
 
   // Stop container when leaving the page
   useEffect(() => {
@@ -332,19 +302,13 @@ function ChallengePage() {
     };
   }, [stopTerminal]);
 
-  // Open/close PANEL only (non-destructive). Start terminal on first open.
+  // Open/close PANEL only (temporarily disabled)
   const handleTogglePanel = async () => {
-    if (isTerminalLoading) return; // prevent race during boot
-    const willOpen = !showWebshell;
-    setShowWebshell(willOpen);
-    if (willOpen && !terminalUrl) {
-      await openTerminal();
-    }
+    alert('Webshell service will be available after Docker services are deployed to Azure');
   };
 
   const handleHardClose = async () => {
     setShowWebshell(false);
-    await stopTerminal();
   };
 
   const handleFlagSubmit = async (event) => {
@@ -459,29 +423,29 @@ function ChallengePage() {
       <button
         className={`${styles.webshellToggle} ${showWebshell ? styles.webshellToggleShifted : ''}`}
         onClick={handleTogglePanel}
-        disabled={isTerminalLoading}
-        aria-pressed={showWebshell}
-        aria-label={showWebshell ? 'Close webshell panel' : 'Open webshell panel'}
-        title={showWebshell ? 'Close webshell' : 'Open webshell'}
+        aria-label="Webshell (temporarily disabled)"
+        title="Webshell service will be available after Azure deployment"
       >
-        {isTerminalLoading ? 'Starting…' : showWebshell ? 'Close Webshell' : 'Open Webshell'}
+        Open Webshell (Coming Soon)
       </button>
 
-      {/* Webshell Panel */}
+      {/* Webshell Panel - Temporarily Disabled */}
       <div className={`${styles.webshellContainer} ${showWebshell ? styles.visible : ''}`}>
         <div className={styles.webshellHeader}>
-          <span>Kali Linux Terminal</span>
-          <button onClick={handleHardClose} className={styles.closeBtn} title="Stop and close">
+          <span>Webshell Service (Coming Soon)</span>
+          <button onClick={handleHardClose} className={styles.closeBtn} title="Close">
             X
           </button>
         </div>
 
-        {/* Scroll host container; iframe scroll stays isolated */}
         <div className={styles.webshellBody}>
-          {isTerminalLoading && <p className={styles.statusMsg}>Loading Terminal...</p>}
-          {terminalUrl && !isTerminalLoading && (
-            <iframe src={terminalUrl} title="CTF Webshell Terminal" className={styles.terminalFrame} />
-          )}
+          <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
+            <h3>🚧 Webshell Service Under Development 🚧</h3>
+            <p>The webshell terminal will be available after Docker services are deployed to Azure.</p>
+            <p>This will provide you with a full Kali Linux environment for solving challenges.</p>
+            <br />
+            <p>For now, you can download challenge files and work on them locally.</p>
+          </div>
         </div>
       </div>
     </div>
