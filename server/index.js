@@ -16,7 +16,8 @@ const Challenge = require('./models/Challenge');
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://your-frontend-name.vercel.app'
+    'https://ctf-01.vercel.app',
+    'https://ctf-01-b8hd6bsxi-aditemp01s-projects.vercel.app'
   ],
   credentials: true
 }));
@@ -25,8 +26,112 @@ app.use(express.json());
 app.use('/files', express.static(path.join(__dirname, 'public','files')));
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected successfully.'))
+  .then(async () => {
+    console.log('MongoDB connected successfully.');
+    
+    // Initialize database with challenges and test users
+    await initializeDatabase();
+  })
   .catch(err => console.error('MongoDB connection error:', err));
+
+// Initialize database with sample data
+const initializeDatabase = async () => {
+  try {
+    // Check if challenges exist
+    const challengeCount = await Challenge.countDocuments();
+    if (challengeCount === 0) {
+      console.log('Seeding challenges...');
+      const challenges = [
+        {
+          challengeId: 1,
+          name: 'Initiation Rite',
+          description: 'M2 has linked up with Nisbot\'s command center. Before we can proceed, we need to bring you, our third teammate, online. Run the initiation program to establish the link.',
+          category: 'General',
+          difficulty: 'Welcome',
+          points: 0,
+          flag: 'flag{w3lc0me_t0_th3_r3scu3_m1ss10n}',
+          downloadFile: 'initiate',
+          position: { top: '25%', left: '65%' }
+        },
+        {
+          challengeId: 2,
+          name: 'Ghost in the Drive',
+          description: 'M1 wiped the ship\'s logs to cover its tracks! The data might still be lingering on this damaged drive image. Find the deleted log file to uncover M1\'s next move.',
+          category: 'Forensics',
+          difficulty: 'Easy',
+          points: 25,
+          flag: 'flag{d3l3t3d_d4t4_n3v3r_d13s}',
+          downloadFile: 'usb_drive.dd.vhd',
+          position: { top: '45%', left: '70%' }
+        },
+        {
+          challengeId: 3,
+          name: 'Unfiltered Ping',
+          description: 'The logs point to this basic Network Diagnostic Tool. It\'s our only way into M1\'s command server. It looks simple... maybe too simple.',
+          category: 'Web Security',
+          difficulty: 'Medium',
+          points: 100,
+          flag: 'flag{n3v3r_tru5t_u53r_1nput}',
+          downloadFile: '',
+          position: { top: '65%', left: '80%' }
+        },
+        {
+          challengeId: 4,
+          name: 'The Cookie Jar',
+          description: 'While exploring the server, you found a secondary login portal. Access is controlled by a session cookie. M1 seems to think nobody would check what\'s inside the cookie jar.',
+          category: 'Web Security',
+          difficulty: 'Medium',
+          points: 100,
+          flag: 'flag{h1dd3n_1n_pl41n_s1ght}',
+          downloadFile: '',
+          position: { top: '80%', left: '72%' }
+        }
+      ];
+      
+      await Challenge.insertMany(challenges);
+      console.log('Challenges seeded successfully!');
+    }
+
+    // Check if test users exist
+    const userCount = await Team.countDocuments();
+    if (userCount === 0) {
+      console.log('Creating test users...');
+      const testUsers = [
+        { username: 'test', password: 'test123' },
+        { username: 'admin', password: 'admin123' },
+        { username: 'demo', password: 'demo123' }
+      ];
+
+      for (const userData of testUsers) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(userData.password, salt);
+        await Team.create({
+          username: userData.username,
+          password: hashedPassword,
+          score: 0,
+          solvedChallenges: [],
+          submissions: []
+        });
+      }
+      console.log('Test users created successfully!');
+      console.log('Login credentials:');
+      console.log('- Username: test, Password: test123');
+      console.log('- Username: admin, Password: admin123');
+      console.log('- Username: demo, Password: demo123');
+    }
+  } catch (error) {
+    console.error('Database initialization error:', error);
+  }
+};
+
+// === HEALTH CHECK ===
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
 // === AUTH ===
 app.post('/api/login', async (req, res) => {
