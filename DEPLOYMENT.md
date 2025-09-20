@@ -10,14 +10,20 @@ This is a Capture The Flag (CTF) competition website with:
 ## 📁 Project Structure
 ```
 ├── client/              # React frontend → VERCEL
-├── server/              # Node.js backend API → RENDER
+├── server/              # Node.js backend API → RENDER (NO DOCKERFILE)
 ├── cookie-challenge/    # Docker service 1 → AZURE
 ├── unfiltered_ping/     # Docker service 2 → AZURE
 ├── web-challenge-1/     # Docker service 3 → AZURE
-├── webshell-service/    # Docker webshell → AZURE (later)
+├── webshell-service/    # Docker webshell → AZURE (comprehensive)
 ├── azure-container-template.yaml
 └── deploy-to-azure.sh
 ```
+
+## ⚠️ **IMPORTANT SEPARATION**
+
+- **`server/`**: Pure Node.js API for Render (NO Docker files)
+- **`webshell-service/`**: Complete Docker service for Azure
+- **Challenge services**: Individual Docker containers for Azure
 
 ## 🚀 Step-by-Step Deployment
 
