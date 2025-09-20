@@ -285,22 +285,21 @@ function ChallengePage() {
     };
   }, [showWebshell]);
 
-  const openTerminal = useCallback(async () => {
-    // Webshell service temporarily disabled for initial deployment
-    alert('Webshell service will be available after Docker services are deployed to Azure');
-  }, []);
+  // Webshell functions temporarily disabled
+  // const openTerminal = useCallback(async () => {
+  //   alert('Webshell service will be available after Docker services are deployed to Azure');
+  // }, []);
 
-  const stopTerminal = useCallback(async () => {
-    // Webshell service temporarily disabled
-    alert('Webshell service will be available after Docker services are deployed to Azure');
-  }, []);
+  // const stopTerminal = useCallback(async () => {
+  //   alert('Webshell service will be available after Docker services are deployed to Azure');
+  // }, []);
 
-  // Stop container when leaving the page
-  useEffect(() => {
-    return () => {
-      stopTerminal().catch(() => {});
-    };
-  }, [stopTerminal]);
+  // Stop container when leaving the page - temporarily disabled
+  // useEffect(() => {
+  //   return () => {
+  //     stopTerminal().catch(() => {});
+  //   };
+  // }, [stopTerminal]);
 
   // Open/close PANEL only (temporarily disabled)
   const handleTogglePanel = async () => {
