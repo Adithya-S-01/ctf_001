@@ -1,0 +1,47 @@
+# Azure Container Instances deployment template
+apiVersion: '2021-03-01'
+location: eastus
+name: ctf-challenge-services
+properties:
+  containers:
+  - name: cookie-challenge
+    properties:
+      image: your-registry.azurecr.io/cookie-challenge:latest
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 80
+        protocol: TCP
+  - name: unfiltered-ping
+    properties:
+      image: your-registry.azurecr.io/unfiltered-ping:latest
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 80
+        protocol: TCP
+  - name: web-challenge-1
+    properties:
+      image: your-registry.azurecr.io/web-challenge-1:latest
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 80
+        protocol: TCP
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: 8000
+    - protocol: tcp
+      port: 9000
+    - protocol: tcp
+      port: 10000
+type: Microsoft.ContainerInstance/containerGroups
