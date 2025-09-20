@@ -285,6 +285,10 @@ function ChallengePage() {
   }, [showWebshell]);
 
   const openTerminal = useCallback(async () => {
+    // Webshell service temporarily disabled for initial deployment
+    alert('Webshell service will be available after Docker services are deployed to Azure');
+    return;
+    
     if (terminalUrl || isTerminalLoading) return; // already running or starting
     setIsTerminalLoading(true);
     const token = localStorage.getItem('token');

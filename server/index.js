@@ -5,11 +5,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Docker = require('dockerode');
-const net = require('net');
 const path = require('path');
 
-const docker = new Docker();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -139,70 +136,19 @@ app.post('/api/challenge/submit', async (req, res) => {
   }
 });
 
-// === DOCKER WEB SHELL ===
-const activeContainers = new Map();
-app.post('/api/webshell/start', async (req, res) => {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
-
+// === LEADERBOARD ===
+app.get('/api/leaderboard', async (req, res) => {
   try {
-    const token = authHeader.split(' ')[1];
-    const { teamId } = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (activeContainers.has(teamId)) {
-      const old = docker.getContainer(activeContainers.get(teamId));
-      await old.remove({ force: true }).catch(() => {});
-    }
-
-    const hostPort = await findFreePort();
-    const container = await docker.createContainer({
-      Image: 'kali-ctf-webshell',
-      Tty: false,
-      HostConfig: {
-        PortBindings: { '8080/tcp': [{ HostPort: String(hostPort) }] },
-        Memory: 512 * 1024 * 1024,
-        CpuShares: 512
-      }
-    });
-
-    await container.start();
-    activeContainers.set(teamId, container.id);
-    setTimeout(() => res.json({ url: `http://localhost:${hostPort}` }), 1000);
+    const teams = await Team.find({})
+      .select('username score')
+      .sort({ score: -1 })
+      .limit(10);
+    
+    res.json({ success: true, leaderboard: teams });
   } catch (err) {
-    console.error('Webshell start error:', err);
-    res.status(500).json({ error: 'Failed to create terminal.' });
+    console.error('Leaderboard error:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
-
-app.post('/api/webshell/stop', async (req, res) => {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
-  try {
-    const token = authHeader.split(' ')[1];
-    const { teamId } = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (activeContainers.has(teamId)) {
-      const containerId = activeContainers.get(teamId);
-      const container = docker.getContainer(containerId);
-      await container.remove({ force: true });
-      activeContainers.delete(teamId);
-      return res.json({ success: true, message: 'Terminal stopped.' });
-    }
-    res.json({ success: true, message: 'No active terminal.' });
-  } catch (err) {
-    console.error('Webshell stop error:', err);
-    res.status(500).json({ error: 'Failed to stop terminal.' });
-  }
-});
-
-function findFreePort() {
-  return new Promise(res => {
-    const server = net.createServer();
-    server.listen(0, () => {
-      const port = server.address().port;
-      server.close(() => res(port));
-    });
-  });
-}
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

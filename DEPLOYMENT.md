@@ -3,23 +3,25 @@
 ## 🎯 Project Overview
 This is a Capture The Flag (CTF) competition website with:
 - **Frontend**: React application (deploy to Vercel)
-- **Backend**: Node.js API with MongoDB (deploy to Render)
-- **Challenge Services**: 3 Docker containers (deploy to Azure later)
+- **Backend**: Node.js API with MongoDB (deploy to Render) 
+- **Challenge Services**: 3 Docker containers (deploy to Azure)
+- **Webshell Service**: Docker-based terminal service (deploy to Azure later)
 
 ## 📁 Project Structure
 ```
-├── client/              # React frontend
-├── server/              # Node.js backend API
-├── cookie-challenge/    # Docker service 1
-├── unfiltered_ping/     # Docker service 2  
-├── web-challenge-1/     # Docker service 3
+├── client/              # React frontend → VERCEL
+├── server/              # Node.js backend API → RENDER
+├── cookie-challenge/    # Docker service 1 → AZURE
+├── unfiltered_ping/     # Docker service 2 → AZURE
+├── web-challenge-1/     # Docker service 3 → AZURE
+├── webshell-service/    # Docker webshell → AZURE (later)
 ├── azure-container-template.yaml
 └── deploy-to-azure.sh
 ```
 
 ## 🚀 Step-by-Step Deployment
 
-### Phase 1: Deploy Backend to Render
+### Phase 1: Deploy Backend to Render (Main API)
 
 1. **Go to [Render](https://render.com) and sign up/login**
 
@@ -95,63 +97,26 @@ After both deployments are live:
 ## ✅ Testing Your Deployment
 
 1. **Test Backend:** Visit `https://your-backend.onrender.com/api/map-data`
-   - Should return JSON response (even if empty)
+   - Should return JSON response with challenges
 
 2. **Test Frontend:** Visit `https://your-frontend.vercel.app`
    - Should load the login page
-   - Try logging in (create test account first via backend)
+   - Challenge map should work (webshell temporarily disabled)
 
-## 🐛 Common Issues & Solutions
-
-### Frontend Issues:
-- **CORS Errors**: Make sure backend CORS includes your Vercel URL
-- **API Calls Failing**: Verify `REACT_APP_API_URL` environment variable
-- **Build Failures**: Check React version compatibility
-
-### Backend Issues:
-- **MongoDB Connection**: Verify `MONGODB_URI` is correct
-- **Port Issues**: Render automatically assigns PORT, don't hardcode it
-- **Environment Variables**: Double-check all vars are set in Render dashboard
-
-### Both Services:
-- **Cold Starts**: Render free tier has cold starts, first request may be slow
-- **HTTPS Required**: Both services should use HTTPS URLs
-
-## 📝 Post-Deployment Checklist
-
-- [ ] Backend deployed and accessible at Render URL
-- [ ] Frontend deployed and accessible at Vercel URL  
-- [ ] Environment variables configured correctly
-- [ ] CORS updated with actual frontend URL
-- [ ] Login functionality working
-- [ ] API calls successful from frontend to backend
-- [ ] File downloads working (challenge files)
-
-## 🔄 Making Updates
-
-### Frontend Updates:
-- Push changes to GitHub
-- Vercel auto-deploys from main branch
-
-### Backend Updates:
-- Push changes to GitHub  
-- Render auto-deploys from main branch
-- Check logs in Render dashboard for issues
-
-## 🎮 CTF Features Enabled
+## 🎮 CTF Features Currently Working
 
 - ✅ User authentication (login/signup)
 - ✅ Challenge listing and details
-- ✅ Flag submission
-- ✅ Score tracking
+- ✅ Flag submission and scoring
+- ✅ Leaderboard
 - ✅ File downloads for challenges
 - ✅ Responsive design
 
-## 🚫 Not Yet Deployed (Phase 4 - Azure)
+## 🚫 Features for Later Deployment (Azure Phase)
 
-- Docker challenge services (cookie-challenge, unfiltered_ping, web-challenge-1)
-- WebShell functionality (requires Docker)
-- Container-based challenges
+- ❌ WebShell functionality (requires Docker service)
+- ❌ Docker-based challenge containers
+- ❌ Live challenge environments
 
 ## 📞 Support
 

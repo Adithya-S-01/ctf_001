@@ -7,7 +7,19 @@ A modern Capture The Flag (CTF) competition platform built with React frontend a
 - **Frontend**: React.js (deployed on Vercel)
 - **Backend**: Node.js + Express + MongoDB (deployed on Render)  
 - **Challenge Services**: Docker containers (Azure Container Instances)
+- **Webshell Service**: Docker-based terminal (Azure Container Instances)
 - **Database**: MongoDB Atlas
+
+## 📁 Services Structure
+
+```
+├── client/              # React frontend → Vercel
+├── server/              # Node.js API backend → Render
+├── webshell-service/    # Docker webshell → Azure
+├── cookie-challenge/    # Challenge container → Azure
+├── unfiltered_ping/     # Challenge container → Azure
+└── web-challenge-1/     # Challenge container → Azure
+```
 
 ## 🚀 Quick Start
 
