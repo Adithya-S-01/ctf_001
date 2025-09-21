@@ -134,4 +134,94 @@ If you encounter issues:
 
 ---
 
-**Next Steps**: Once frontend and backend are working, we'll set up Azure Container Instances for the Docker-based challenges.
+## Phase 3: Deploy Webshell Service to Azure Container Instances
+
+### Prerequisites
+- Azure account with active subscription
+- Azure CLI installed and configured
+- Docker Desktop installed (for building images)
+
+### Step 1: Build and Push Webshell Docker Image
+
+1. **Navigate to webshell-service directory**:
+   ```bash
+   cd webshell-service
+   ```
+
+2. **Build the Docker image**:
+   ```bash
+   docker build -t ctf-webshell-service .
+   ```
+
+3. **Tag for Azure Container Registry** (replace `yourregistry` with your ACR name):
+   ```bash
+   docker tag ctf-webshell-service yourregistry.azurecr.io/ctf-webshell-service:latest
+   ```
+
+4. **Push to Azure Container Registry**:
+   ```bash
+   az acr login --name yourregistry
+   docker push yourregistry.azurecr.io/ctf-webshell-service:latest
+   ```
+
+### Step 2: Deploy to Azure Container Instances
+
+1. **Create Azure Container Instance**:
+   ```bash
+   az container create \
+     --resource-group your-resource-group \
+     --name ctf-webshell-service \
+     --image yourregistry.azurecr.io/ctf-webshell-service:latest \
+     --dns-name-label ctf-webshell-001 \
+     --ports 6000 \
+     --environment-variables \
+       JWT_SECRET="Wk7v3Ztqf9x2R1uEYJh5Kp8mT6Xq0dLwNs4VgAz1FcByHrQe" \
+       PORT="6000" \
+       FRONTEND_URL="https://ctf-001-ten.vercel.app" \
+       BACKEND_URL="https://ctf-001.onrender.com" \
+     --cpu 1 \
+     --memory 2 \
+     --registry-login-server yourregistry.azurecr.io \
+     --registry-username yourregistry \
+     --registry-password "your-acr-password"
+   ```
+
+2. **Get the public URL**:
+   ```bash
+   az container show --resource-group your-resource-group --name ctf-webshell-service --query ipAddress.fqdn
+   ```
+
+   Your webshell service will be available at: `http://ctf-webshell-001.region.azurecontainer.io:6000`
+
+### Step 3: Build and Deploy Kali Webshell Container
+
+1. **Build the Kali webshell image**:
+   ```bash
+   docker build -f kali-webshell.Dockerfile -t kali-ctf-webshell .
+   ```
+
+2. **Tag and push to ACR**:
+   ```bash
+   docker tag kali-ctf-webshell yourregistry.azurecr.io/kali-ctf-webshell:latest
+   docker push yourregistry.azurecr.io/kali-ctf-webshell:latest
+   ```
+
+### Step 4: Update Frontend Configuration
+
+Once your webshell service is deployed, you'll need to update the frontend to use the Azure URL instead of localhost. This step will be covered in the next phase.
+
+### Testing Your Azure Deployment
+
+1. **Check webshell service health**:
+   ```bash
+   curl http://ctf-webshell-001.region.azurecontainer.io:6000/health
+   ```
+
+2. **Expected response**:
+   ```json
+   {"status":"healthy","service":"webshell-service"}
+   ```
+
+---
+
+**Next Steps**: Once webshell service is deployed on Azure, we'll update the frontend to connect to it and enable the webshell UI.

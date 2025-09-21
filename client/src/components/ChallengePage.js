@@ -12,80 +12,84 @@
 
 // function ChallengePage() {
 //   const { challengeId } = useParams();
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
 
-//   const [challenge, setChallenge] = useState(null);
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [showHint, setShowHint] = useState(false);
-//   const [showWebshell, setShowWebshell] = useState(false);
-//   const [flagInput, setFlagInput] = useState('');
-//   const [terminalUrl, setTerminalUrl] = useState('');
-//   const [isTerminalLoading, setIsTerminalLoading] = useState(false);
-//   const [publicApiUrl, setPublicApiUrl] = useState('');
+  const [challenge, setChallenge] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showHint, setShowHint] = useState(false);
+  const [showWebshell, setShowWebshell] = useState(false);
+  const [flagInput, setFlagInput] = useState('');
+  const [terminalUrl, setTerminalUrl] = useState('');
+  const [isTerminalLoading, setIsTerminalLoading] = useState(false);
+  const [publicApiUrl, setPublicApiUrl] = useState('');
 
-//   useEffect(() => {
-//     const fetchChallenge = async () => {
-//       setIsLoading(true);
-//       try {
-//         const response = await fetch(`http://localhost:5000/api/challenge/${challengeId}`);
-//         const data = await response.json();
-//         if (data.success) {
-//           setChallenge(data.challenge);
-//           setPublicApiUrl(data.publicApiUrl);
-//         } else {
-//           navigate('/map');
-//         }
-//       } catch (error) {
-//         console.error("Failed to fetch challenge:", error);
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     };
-//     fetchChallenge();
-//   }, [challengeId, navigate]);
+  useEffect(() => {
+    const fetchChallenge = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/challenge/${challengeId}`);
+        const data = await response.json();
+        if (data.success) {
+          setChallenge(data.challenge);
+          setPublicApiUrl(data.publicApiUrl);
+        } else {
+          navigate('/map');
+        }
+      } catch (error) {
+        console.error("Failed to fetch challenge:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchChallenge();
+  }, [challengeId, navigate]);
 
-//     const openTerminal = async () => {
-//     // Don't do anything if a terminal is already loading or loaded
-//     if (terminalUrl || isTerminalLoading) return;
+  const openTerminal = async () => {
+    // Don't do anything if a terminal is already loading or loaded
+    if (terminalUrl || isTerminalLoading) return;
 
-//     setIsTerminalLoading(true);
-//     const token = localStorage.getItem('token');
-//     try {
-//         const response = await fetch('http://localhost:5000/api/webshell/start', {
-//         method: 'POST',
-//         headers: { 'Authorization': `Bearer ${token}` }
-//         });
-//         const data = await response.json();
+    setIsTerminalLoading(true);
+    const token = localStorage.getItem('token');
+    const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'http://localhost:6000';
+    
+    try {
+      const response = await fetch(`${webshellUrl}/api/webshell/start`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
 
-//         if (data.url) {
-//         setTerminalUrl(data.url); // Set the URL for the iframe
-//         } else {
-//         console.error("Failed to get terminal URL:", data.error);
-//         }
-//     } catch (err) {
-//         console.error("Error fetching terminal:", err);
-//     } finally {
-//         setIsTerminalLoading(false);
-//     }
-//     };
+      if (data.url) {
+        setTerminalUrl(data.url); // Set the URL for the iframe
+      } else {
+        console.error("Failed to get terminal URL:", data.error);
+      }
+    } catch (err) {
+      console.error("Error fetching terminal:", err);
+    } finally {
+      setIsTerminalLoading(false);
+    }
+  };
 
-//     const closeTerminal = async () => {
-//     if (!terminalUrl) return; // No terminal to close
+  const closeTerminal = async () => {
+    if (!terminalUrl) return; // No terminal to close
 
-//     const token = localStorage.getItem('token');
-//     try {
-//         await fetch('http://localhost:5000/api/webshell/stop', {
-//         method: 'POST',
-//         headers: { 'Authorization': `Bearer ${token}` }
-//         });
-//     } catch (err) {
-//         console.error("Error stopping terminal:", err);
-//     } finally {
-//         // Clear the URL regardless of success
-//         setTerminalUrl('');
-//         setShowWebshell(false); // Also close the panel
-//     }
-//     };
+    const token = localStorage.getItem('token');
+    const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'http://localhost:6000';
+    
+    try {
+      await fetch(`${webshellUrl}/api/webshell/stop`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error("Error stopping terminal:", err);
+    } finally {
+      // Clear the URL regardless of success
+      setTerminalUrl('');
+      setShowWebshell(false); // Also close the panel
+    }
+  };
 
 //   const handleFlagSubmit = async (event) => {
 //     event.preventDefault();
@@ -238,40 +242,6 @@ function ChallengePage() {
   const navigate = useNavigate();
 
   const [challenge, setChallenge] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showHint, setShowHint] = useState(false);
-
-  // Webshell state (temporarily disabled)
-  const [showWebshell, setShowWebshell] = useState(false);
-  // const [terminalUrl, setTerminalUrl] = useState('');
-  // const [isTerminalLoading, setIsTerminalLoading] = useState(false);
-
-  // Other
-  const [flagInput, setFlagInput] = useState('');
-  // Note: publicApiUrl temporarily disabled while webshell service is separate
-  // const [publicApiUrl, setPublicApiUrl] = useState('');
-
-  useEffect(() => {
-    const fetchChallenge = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/challenge/${challengeId}`);
-        const data = await response.json();
-        if (data.success) {
-          setChallenge(data.challenge);
-          // setPublicApiUrl(data.publicApiUrl); // Temporarily disabled
-        } else {
-          navigate('/map');
-        }
-      } catch (error) {
-        console.error('Failed to fetch challenge:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchChallenge();
-  }, [challengeId, navigate]);
-
   // Prevent scroll chaining to the page only while panel is open
   useEffect(() => {
     const root = document.documentElement;
@@ -285,29 +255,32 @@ function ChallengePage() {
     };
   }, [showWebshell]);
 
-  // Webshell functions temporarily disabled
-  // const openTerminal = useCallback(async () => {
-  //   alert('Webshell service will be available after Docker services are deployed to Azure');
-  // }, []);
+  // Clean up terminal when component unmounts
+  useEffect(() => {
+    return () => {
+      if (terminalUrl) {
+        closeTerminal().catch(() => {});
+      }
+    };
+  }, [terminalUrl]);
 
-  // const stopTerminal = useCallback(async () => {
-  //   alert('Webshell service will be available after Docker services are deployed to Azure');
-  // }, []);
-
-  // Stop container when leaving the page - temporarily disabled
-  // useEffect(() => {
-  //   return () => {
-  //     stopTerminal().catch(() => {});
-  //   };
-  // }, [stopTerminal]);
-
-  // Open/close PANEL only (temporarily disabled)
+  // Open/close webshell functionality
   const handleTogglePanel = async () => {
-    alert('Webshell service will be available after Docker services are deployed to Azure');
+    if (!showWebshell) {
+      setShowWebshell(true);
+      if (!terminalUrl && !isTerminalLoading) {
+        await openTerminal();
+      }
+    } else {
+      setShowWebshell(false);
+    }
   };
 
   const handleHardClose = async () => {
     setShowWebshell(false);
+    if (terminalUrl) {
+      await closeTerminal();
+    }
   };
 
   const handleFlagSubmit = async (event) => {
@@ -422,29 +395,59 @@ function ChallengePage() {
       <button
         className={`${styles.webshellToggle} ${showWebshell ? styles.webshellToggleShifted : ''}`}
         onClick={handleTogglePanel}
-        aria-label="Webshell (temporarily disabled)"
-        title="Webshell service will be available after Azure deployment"
+        aria-label={showWebshell ? "Close Webshell" : "Open Webshell"}
+        title={showWebshell ? "Close Webshell" : "Open Webshell Terminal"}
       >
-        Open Webshell (Coming Soon)
+        {showWebshell ? "Close Webshell" : "Open Webshell"}
       </button>
 
-      {/* Webshell Panel - Temporarily Disabled */}
+      {/* Webshell Panel */}
       <div className={`${styles.webshellContainer} ${showWebshell ? styles.visible : ''}`}>
         <div className={styles.webshellHeader}>
-          <span>Webshell Service (Coming Soon)</span>
+          <span>Kali Linux Webshell</span>
           <button onClick={handleHardClose} className={styles.closeBtn} title="Close">
             X
           </button>
         </div>
 
         <div className={styles.webshellBody}>
-          <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
-            <h3>🚧 Webshell Service Under Development 🚧</h3>
-            <p>The webshell terminal will be available after Docker services are deployed to Azure.</p>
-            <p>This will provide you with a full Kali Linux environment for solving challenges.</p>
-            <br />
-            <p>For now, you can download challenge files and work on them locally.</p>
-          </div>
+          {isTerminalLoading ? (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
+              <h3>� Starting Terminal...</h3>
+              <p>Please wait while we prepare your Kali Linux environment...</p>
+            </div>
+          ) : terminalUrl ? (
+            <iframe
+              src={terminalUrl}
+              title="Kali Linux Terminal"
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                backgroundColor: '#000'
+              }}
+            />
+          ) : (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
+              <h3>🖥️ Webshell Terminal</h3>
+              <p>Click "Open Webshell" to start your Kali Linux environment.</p>
+              <p>This will provide you with tools for solving CTF challenges.</p>
+              <br />
+              <button 
+                onClick={openTerminal}
+                style={{
+                  background: '#00ff00',
+                  color: '#000',
+                  border: 'none',
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontFamily: 'monospace'
+                }}
+              >
+                Start Terminal
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
