@@ -25,6 +25,11 @@ function ChallengePage() {
   const [isTerminalLoading, setIsTerminalLoading] = useState(false);
   const [publicApiUrl, setPublicApiUrl] = useState('');
 
+  // Debug webshell state changes
+  useEffect(() => {
+    console.log('Webshell state changed:', showWebshell);
+  }, [showWebshell]);
+
   useEffect(() => {
     const fetchChallenge = async () => {
       setIsLoading(true);
@@ -99,12 +104,15 @@ function ChallengePage() {
 
   // Open/close webshell functionality
   const handleTogglePanel = async () => {
+    console.log('Webshell toggle clicked, current state:', showWebshell);
     if (!showWebshell) {
+      console.log('Opening webshell...');
       setShowWebshell(true);
       if (!terminalUrl && !isTerminalLoading) {
         await openTerminal();
       }
     } else {
+      console.log('Closing webshell...');
       setShowWebshell(false);
     }
   };
@@ -230,6 +238,13 @@ function ChallengePage() {
         onClick={handleTogglePanel}
         aria-label={showWebshell ? "Close Webshell" : "Open Webshell"}
         title={showWebshell ? "Close Webshell" : "Open Webshell Terminal"}
+        style={{
+          backgroundColor: '#00ff00',
+          color: '#000',
+          border: '2px solid #333',
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}
       >
         {showWebshell ? "Close Webshell" : "Open Webshell"}
       </button>
