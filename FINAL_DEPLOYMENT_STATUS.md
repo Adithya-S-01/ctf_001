@@ -3,7 +3,7 @@
 ## Live Deployment URLs
 
 ### Production Services
-- **Frontend (Vercel)**: https://ctf-001-ten.vercel.app
+- **Frontend (Vercel)**: https://ctf-01.vercel.app
 - **Backend API (Render)**: https://ctf-001.onrender.com  
 - **Webshell Terminal (Azure)**: https://ctf01.azurewebsites.net
 
@@ -35,7 +35,7 @@
 ## 🎮 How to Use
 
 ### For Players:
-1. **Access the platform**: Go to https://ctf-001-ten.vercel.app
+1. **Access the platform**: Go to https://ctf-01.vercel.app
 2. **Create account**: Register with team name and password
 3. **Explore challenges**: Navigate the interactive map
 4. **Use tools**: Click "Open Webshell" for Kali Linux access

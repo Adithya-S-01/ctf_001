@@ -1,10 +1,10 @@
 # Deployment Testing Checklist
 ## 🗄️ **Backend Testing** - https://ctf-001.onrender.com## 🌐 **LIVE DEPLOYMENT URLS**
-- **Frontend**: https://ctf-001-ten.vercel.app
+- **Frontend**: https://ctf-01.vercel.app
 - **Backend**: https://ctf-001.onrender.com  
 - **Webshell**: https://ctf01.azurewebsites.net
 
-## 🌐 **Frontend Testing** - https://ctf-001-ten.vercel.app
+## 🌐 **Frontend Testing** - https://ctf-01.vercel.app
 
 ### ✅ **Basic Functionality:**
 - [ ] Login page loads correctly

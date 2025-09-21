@@ -63,35 +63,9 @@ function ChallengePage() {
     setShowWebshell(false);
   };
 
-//   const handleFlagSubmit = async (event) => {
-//     event.preventDefault();
-//     const token = localStorage.getItem('token');
-//     if (!token) {
-//       alert("You are not logged in!");
-//       return navigate('/');
-//     }
-//     try {
-//       const response = await fetch('http://localhost:5000/api/challenge/submit', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': `Bearer ${token}`
-//         },
-//         body: JSON.stringify({
-//           challengeId: challenge.challengeId,
-//           flag: flagInput
-//         })
-//       });
-//       const data = await response.json();
-//       alert(data.message);
-//       if (data.success && data.message !== "Already solved!") {
-//         navigate('/map');
-//       }
-//     } catch (error) {
-//       console.error("Error submitting flag:", error);
-//       alert("An error occurred.");
-//     }
-//   };
+  };
+
+  const handleFlagSubmit = async (event) => {
 
 //   if (isLoading) return <div>Loading Challenge...</div>;
 //   if (!challenge) return <div>Challenge not found.</div>;
