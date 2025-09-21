@@ -108,7 +108,9 @@ function ChallengePage() {
     if (!showWebshell) {
       console.log('Opening webshell...');
       setShowWebshell(true);
+      // Automatically start terminal when opening
       if (!terminalUrl && !isTerminalLoading) {
+        console.log('Auto-starting terminal...');
         await openTerminal();
       }
     } else {
@@ -261,8 +263,9 @@ function ChallengePage() {
         <div className={styles.webshellBody}>
           {isTerminalLoading ? (
             <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
-              <h3>🔄 Starting Terminal...</h3>
-              <p>Please wait while we prepare your Kali Linux environment...</p>
+              <h3>🔄 Connecting to Kali Linux...</h3>
+              <p>Loading your Azure terminal environment...</p>
+              <p>URL: {process.env.REACT_APP_WEBSHELL_URL}</p>
             </div>
           ) : terminalUrl ? (
             <iframe
@@ -280,24 +283,13 @@ function ChallengePage() {
             />
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
-              <h3>🖥️ Kali Linux Terminal</h3>
-              <p>Access a full Kali Linux environment with all the tools you need for CTF challenges.</p>
-              <p>Available tools: nmap, burpsuite, sqlmap, john, hashcat, and many more!</p>
-              <br />
-              <button 
-                onClick={openTerminal}
-                style={{
-                  background: '#00ff00',
-                  color: '#000',
-                  border: 'none',
-                  padding: '10px 20px',
-                  cursor: 'pointer',
-                  fontFamily: 'monospace',
-                  borderRadius: '4px'
-                }}
-              >
-                Start Terminal
-              </button>
+              <h3>� Kali Linux Terminal Ready</h3>
+              <p>Click "Open Webshell" to connect to your Azure terminal.</p>
+              <p>Environment: {process.env.REACT_APP_WEBSHELL_URL || 'https://ctf01.azurewebsites.net'}</p>
+              <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#333', borderRadius: '5px' }}>
+                <strong>Available Tools:</strong><br />
+                nmap, burpsuite, sqlmap, john, hashcat, netcat, wget, curl, and more!
+              </div>
             </div>
           )}
         </div>
