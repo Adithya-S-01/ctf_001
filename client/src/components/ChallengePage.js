@@ -13,6 +13,9 @@ function ChallengePage() {
   const { challengeId } = useParams();
   const navigate = useNavigate();
 
+  // Version check for debugging cache issues
+  console.log('ChallengePage loaded - Version: 2024-09-21-v3.0-FINAL');
+
   const [challenge, setChallenge] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showHint, setShowHint] = useState(false);
@@ -232,7 +235,7 @@ function ChallengePage() {
       </button>
 
       {/* Webshell Panel */}
-      <div className={`${styles.webshellContainer} ${showWebshell ? styles.visible : ''}`}>
+      <div className={`${styles.webshellContainer} ${showWebshell ? styles.visible : ''}`} data-version="v3.0-final">
         <div className={styles.webshellHeader}>
           <span>Kali Linux Webshell</span>
           <button onClick={handleHardClose} className={styles.closeBtn} title="Close">
