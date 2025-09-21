@@ -1,6 +1,10 @@
 # Deployment Testing Checklist
+## 🗄️ **Backend Testing** - https://ctf-001.onrender.com## 🌐 **LIVE DEPLOYMENT URLS**
+- **Frontend**: https://ctf-001-ten.vercel.app
+- **Backend**: https://ctf-001.onrender.com  
+- **Webshell**: https://ctf01.azurewebsites.net
 
-## 🌐 **Frontend Testing** - https://ctf-01.vercel.app/
+## 🌐 **Frontend Testing** - https://ctf-001-ten.vercel.app
 
 ### ✅ **Basic Functionality:**
 - [ ] Login page loads correctly
@@ -85,6 +89,71 @@
 - **Backend Health**: https://ctf-001.onrender.com/api/health
 - **Challenge Data**: https://ctf-001.onrender.com/api/map-data
 - **Sample File**: https://ctf-001.onrender.com/files/initiate
+
+---
+
+## Phase 3: Webshell Integration Testing (After Deployment)
+
+### Prerequisites
+- Webshell service deployed to your chosen platform
+- REACT_APP_WEBSHELL_URL updated in frontend environment
+- Frontend redeployed with new webshell URL
+
+### Webshell Service Testing
+
+1. **Health Check**:
+   ```bash
+   curl https://your-webshell-service-url/health
+   ```
+   Expected: `{"status":"healthy","service":"webshell-service"}`
+
+2. **Authentication Test** (using test credentials):
+   - Login with `testteam1` / `password123`
+   - Navigate to any challenge (e.g., Challenge 1)
+   - Click "Open Webshell" button
+   - Should show webshell panel with terminal loading message
+
+3. **Terminal Functionality**:
+   - Terminal should start and load Kali Linux environment
+   - Test basic commands: `ls`, `pwd`, `whoami`
+   - Test file download: `curl http://host.docker.internal:5000/files/initiate -o initiate`
+   - Test challenge tools: `strings`, `file`, `grep`, etc.
+
+4. **Error Handling**:
+   - Test with invalid token (should show 401 error)
+   - Test stopping terminal (close button should work)
+   - Test multiple terminal sessions (old ones should be cleaned up)
+
+### Expected Webshell Behavior
+
+✅ **Working States**:
+- Health endpoint returns OK
+- Authentication with valid JWT works
+- Terminal starts and loads within 30 seconds
+- Basic Linux commands work
+- File downloads work
+- Terminal cleanup on close
+
+❌ **Common Issues**:
+- CORS errors (check frontend URL in webshell CORS config)
+- Authentication failures (verify JWT_SECRET matches backend)
+- Docker daemon issues (Docker must be available in container)
+- Port conflicts (ensure unique port allocation)
+- Memory issues (containers need sufficient resources)
+
+### Troubleshooting
+
+**If webshell fails to start**:
+1. Check webshell service logs
+2. Verify Docker daemon is accessible
+3. Check JWT_SECRET matches backend
+4. Verify CORS configuration includes frontend URL
+
+**If terminal doesn't load**:
+1. Check if kali-ctf-webshell image is available
+2. Verify port allocation and networking
+3. Check container resource limits
+4. Monitor for container startup errors
 
 ---
 

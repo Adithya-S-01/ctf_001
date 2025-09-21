@@ -1,17 +1,16 @@
-// import React, { useState, useEffect } from 'react';
-// import { useParams, useNavigate, Link } from 'react-router-dom';
-// import styles from './ChallengePage.module.css';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import styles from './ChallengePage.module.css';
 
-// import forestBg from '../images/background-forest.gif';
-// import butterflyIcon from '../icons/butterfly.gif';
-// import speechBubbleIcon from '../icons/speech-bubble.png';
-// import homeIcon from '../icons/home.png';
-// import leaderboardIcon from '../icons/leaderboard.png';
-// import cheatsheetIcon from '../icons/cheatsheet.png';
+import forestBg from '../images/background-forest.gif';
+import butterflyIcon from '../icons/butterfly.gif';
+import speechBubbleIcon from '../icons/speech-bubble.png';
+import homeIcon from '../icons/home.png';
+import leaderboardIcon from '../icons/leaderboard.png';
+import cheatsheetIcon from '../icons/cheatsheet.png';
 
-
-// function ChallengePage() {
-//   const { challengeId } = useParams();
+function ChallengePage() {
+  const { challengeId } = useParams();
   const navigate = useNavigate();
 
   const [challenge, setChallenge] = useState(null);
@@ -45,50 +44,22 @@
   }, [challengeId, navigate]);
 
   const openTerminal = async () => {
-    // Don't do anything if a terminal is already loading or loaded
-    if (terminalUrl || isTerminalLoading) return;
-
-    setIsTerminalLoading(true);
-    const token = localStorage.getItem('token');
-    const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'http://localhost:6000';
-    
-    try {
-      const response = await fetch(`${webshellUrl}/api/webshell/start`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
-
-      if (data.url) {
-        setTerminalUrl(data.url); // Set the URL for the iframe
-      } else {
-        console.error("Failed to get terminal URL:", data.error);
-      }
-    } catch (err) {
-      console.error("Error fetching terminal:", err);
-    } finally {
-      setIsTerminalLoading(false);
+    // For Azure Web App terminal, we can directly set the URL
+    if (!terminalUrl && !isTerminalLoading) {
+      setIsTerminalLoading(true);
+      // Simulate a brief loading time for UX
+      setTimeout(() => {
+        const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'https://ctf01.azurewebsites.net';
+        setTerminalUrl(webshellUrl);
+        setIsTerminalLoading(false);
+      }, 1000);
     }
   };
 
   const closeTerminal = async () => {
-    if (!terminalUrl) return; // No terminal to close
-
-    const token = localStorage.getItem('token');
-    const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'http://localhost:6000';
-    
-    try {
-      await fetch(`${webshellUrl}/api/webshell/stop`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-    } catch (err) {
-      console.error("Error stopping terminal:", err);
-    } finally {
-      // Clear the URL regardless of success
-      setTerminalUrl('');
-      setShowWebshell(false); // Also close the panel
-    }
+    // Simply clear the terminal URL
+    setTerminalUrl('');
+    setShowWebshell(false);
   };
 
 //   const handleFlagSubmit = async (event) => {
@@ -258,11 +229,10 @@ function ChallengePage() {
   // Clean up terminal when component unmounts
   useEffect(() => {
     return () => {
-      if (terminalUrl) {
-        closeTerminal().catch(() => {});
-      }
+      // Simple cleanup - just clear the URL
+      setTerminalUrl('');
     };
-  }, [terminalUrl]);
+  }, []);
 
   // Open/close webshell functionality
   const handleTogglePanel = async () => {
@@ -426,12 +396,13 @@ function ChallengePage() {
                 border: 'none',
                 backgroundColor: '#000'
               }}
+              allow="clipboard-read; clipboard-write"
             />
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
-              <h3>🖥️ Webshell Terminal</h3>
-              <p>Click "Open Webshell" to start your Kali Linux environment.</p>
-              <p>This will provide you with tools for solving CTF challenges.</p>
+              <h3>🖥️ Kali Linux Terminal</h3>
+              <p>Access a full Kali Linux environment with all the tools you need for CTF challenges.</p>
+              <p>Available tools: nmap, burpsuite, sqlmap, john, hashcat, and many more!</p>
               <br />
               <button 
                 onClick={openTerminal}
@@ -441,7 +412,8 @@ function ChallengePage() {
                   border: 'none',
                   padding: '10px 20px',
                   cursor: 'pointer',
-                  fontFamily: 'monospace'
+                  fontFamily: 'monospace',
+                  borderRadius: '4px'
                 }}
               >
                 Start Terminal
