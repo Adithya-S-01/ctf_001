@@ -50,6 +50,7 @@ function ChallengePage() {
       // Simulate a brief loading time for UX
       setTimeout(() => {
         const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'https://ctf01.azurewebsites.net';
+        console.log('Opening terminal with URL:', webshellUrl); // Debug log
         setTerminalUrl(webshellUrl);
         setIsTerminalLoading(false);
       }, 1000);
@@ -397,6 +398,8 @@ function ChallengePage() {
                 backgroundColor: '#000'
               }}
               allow="clipboard-read; clipboard-write"
+              onLoad={() => console.log('Terminal iframe loaded successfully')}
+              onError={(e) => console.error('Terminal iframe failed to load:', e)}
             />
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#00ff00', fontFamily: 'monospace' }}>
