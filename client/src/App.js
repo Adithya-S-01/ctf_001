@@ -6,6 +6,10 @@ import MapPage from './components/MapPage';
 import ChallengePage from './components/ChallengePage';
 
 function App() {
+  // Version check for cache busting
+  console.log('CTF App loaded - Version: 2024-09-21-v2.0');
+  console.log('Webshell URL configured:', process.env.REACT_APP_WEBSHELL_URL);
+  
   return (
     <div className="App">
       <Routes>

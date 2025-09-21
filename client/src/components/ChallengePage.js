@@ -26,6 +26,10 @@ function ChallengePage() {
     const fetchChallenge = async () => {
       setIsLoading(true);
       try {
+        console.log('Environment variables:', {
+          API_URL: process.env.REACT_APP_API_URL,
+          WEBSHELL_URL: process.env.REACT_APP_WEBSHELL_URL
+        });
         const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/challenge/${challengeId}`);
         const data = await response.json();
         if (data.success) {
@@ -47,11 +51,15 @@ function ChallengePage() {
     // For Azure Web App terminal, we can directly set the URL
     if (!terminalUrl && !isTerminalLoading) {
       setIsTerminalLoading(true);
-      // Simulate a brief loading time for UX
+      console.log('Starting terminal initialization...');
+      
+      // Simulate a brief loading time for UX and add cache busting
       setTimeout(() => {
         const webshellUrl = process.env.REACT_APP_WEBSHELL_URL || 'https://ctf01.azurewebsites.net';
-        console.log('Opening terminal with URL:', webshellUrl); // Debug log
-        setTerminalUrl(webshellUrl);
+        // Add timestamp to prevent caching issues
+        const finalUrl = `${webshellUrl}?t=${Date.now()}`;
+        console.log('Opening terminal with URL:', finalUrl);
+        setTerminalUrl(finalUrl);
         setIsTerminalLoading(false);
       }, 1000);
     }
