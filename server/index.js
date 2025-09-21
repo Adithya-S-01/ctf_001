@@ -16,6 +16,7 @@ const Challenge = require('./models/Challenge');
 app.use(cors({
   origin: [
     'http://localhost:3000',
+    'https://ctf-001-ten.vercel.app',
     'https://ctf-01.vercel.app',
     'https://ctf-01-b8hd6bsxi-aditemp01s-projects.vercel.app'
   ],
