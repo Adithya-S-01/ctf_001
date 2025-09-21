@@ -10,12 +10,19 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+      console.log('Attempting login to:', `${process.env.REACT_APP_API_URL || 'https://ctf-001.onrender.com'}/api/login`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://ctf-001.onrender.com'}/api/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({ username, password }),
       });
+      
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (data.success) {
         localStorage.setItem('token', data.token);
